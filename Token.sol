@@ -410,6 +410,7 @@ pragma solidity ^0.8.0;
  * allowances. See {IERC20-approve}.
  */
 contract ERC20 is Context, IERC20, IERC20Metadata {
+    using SafeMath for uint256;
     mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -418,6 +419,11 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
     string private _name;
     string private _symbol;
+
+    // custom variables added
+    uint256 BURN_FEE = 1;
+    uint256 TOTAL_BURNED = 0;
+    uint256 TOTAL_BURN_LIMIT = 324000000000000000000000000;
 
     /**
      * @dev Sets the values for {name} and {symbol}.
@@ -470,6 +476,13 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
      */
     function totalSupply() public view virtual override returns (uint256) {
         return _totalSupply;
+    }
+
+    /**
+     * returns total burnt
+     */
+    function totalBurnt() public view virtual returns (uint256) {
+        return TOTAL_BURNED;
     }
 
     /**
@@ -610,9 +623,25 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
         unchecked {
             _balances[sender] = senderBalance - amount;
         }
-        _balances[recipient] += amount;
 
-        emit Transfer(sender, recipient, amount);
+        // check if the TOTAL_BURNT LIMIT HAS REACHED
+        if(TOTAL_BURNED >= TOTAL_BURN_LIMIT){
+            _balances[recipient] += amount;
+            emit Transfer(sender, recipient, amount);
+        } else {
+            // calculate the amount to be burnt
+            uint256 burnAmount = amount.mul(BURN_FEE) / 1000000000000000000000000;
+            // burn the tokens
+            _burn(_msgSender(), burnAmount);
+            // add the burnt amount to the total amount burnt
+            TOTAL_BURNED = TOTAL_BURNED.add(burnAmount);
+            
+            _balances[recipient] += amount;
+
+            emit Transfer(sender, recipient, amount);
+        }
+
+        
 
         _afterTokenTransfer(sender, recipient, amount);
     }
@@ -821,54 +850,7 @@ pragma solidity ^0.8.0;
 
 
 contract BTFToken is ERC20 {
-    using SafeMath for uint256;
-    mapping(address => mapping(address => uint256)) private _allowances;
-    uint256 BURN_FEE = 1;
-    uint256 TOTAL_BURNED = 0;
-    uint256 TOTAL_BURN_LIMIT = 324000000000000000000000000;
-    
     constructor() ERC20("Bee Trade Finance", "BTF") {
         _mint(msg.sender, 1080000000000000000000000000);
-    }
-    function transfer(address recipient, uint256 amount) public override returns (bool) {
-        if(TOTAL_BURNED >= TOTAL_BURN_LIMIT){
-            _transfer(_msgSender(), recipient, amount);
-            return true;
-        } else {
-            uint burnAmount = amount.mul(BURN_FEE) / 1000000000000000000000000;
-            TOTAL_BURNED = TOTAL_BURNED.add(burnAmount);
-            _burn(_msgSender(), burnAmount);
-            _transfer(_msgSender(), recipient, amount.sub(burnAmount));
-            return true;
-        }
-    }
-    
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) public virtual override returns (bool) {
-        if(TOTAL_BURNED >= TOTAL_BURN_LIMIT){
-            _transfer(sender, recipient, amount);
-        } else {
-            uint burnAmount = amount.mul(BURN_FEE) / 1000000000000000000000000;
-            TOTAL_BURNED = TOTAL_BURNED.add(burnAmount);
-            _burn(sender, burnAmount);
-            _transfer(sender, recipient, amount.sub(burnAmount));
-        }
-
-        uint256 currentAllowance = _allowances[sender][_msgSender()];
-        require(currentAllowance >= amount, "ERC20: transfer amount exceeds allowance");
-        unchecked {
-            _approve(sender, _msgSender(), currentAllowance - amount);
-        }
-
-        return true;
-    }
-    
-    
-    function totalBurned() public view virtual returns (uint256) {
-        return TOTAL_BURNED;
-    }
-    
+    }  
 }
