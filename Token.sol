@@ -7,7 +7,7 @@
 
 // OpenZeppelin Contracts v4.3.2 (utils/math/SafeMath.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 // CAUTION
 // This version of SafeMath should only be used with Solidity 0.8 or later,
@@ -237,7 +237,7 @@ library SafeMath {
 
 // OpenZeppelin Contracts v4.3.2 (utils/Context.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -264,7 +264,7 @@ abstract contract Context {
 
 // OpenZeppelin Contracts v4.3.2 (token/ERC20/IERC20.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -349,7 +349,7 @@ interface IERC20 {
 
 // OpenZeppelin Contracts v4.3.2 (token/ERC20/extensions/IERC20Metadata.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 
 /**
@@ -379,7 +379,7 @@ interface IERC20Metadata is IERC20 {
 
 // OpenZeppelin Contracts v4.3.2 (token/ERC20/ERC20.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 
 
@@ -766,7 +766,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 
 // OpenZeppelin Contracts v4.3.2 (token/ERC20/extensions/ERC20Burnable.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 
 
@@ -810,7 +810,7 @@ abstract contract ERC20Burnable is Context, ERC20 {
 
 
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/presets/ERC20PresetFixedSupply.sol)
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 
 /**
@@ -845,7 +845,7 @@ contract ERC20PresetFixedSupply is ERC20Burnable {
 
 // File: contracts/BTF.sol
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.0;
 
 
 
